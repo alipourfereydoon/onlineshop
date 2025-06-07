@@ -6,7 +6,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from account.models import User
+from account.models import User,Opt
+from django.core import validators
 
 
 class UserCreationForm(forms.ModelForm):
@@ -20,7 +21,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email",]
+        fields = ["phone",]
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -49,7 +50,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email", "password", "is_active", "is_admin"]
+        fields = ["phone", "password", "is_active", "is_admin"]
 
 
 class UserAdmin(BaseUserAdmin):
@@ -60,7 +61,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ["email", "is_admin"]
+    list_display = ["phone","email", "is_admin"]
     list_filter = ["is_admin"]
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
@@ -88,3 +89,18 @@ admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+admin.site.register(Opt)
+
+
+class LoginForm(forms.Form):
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(11)])
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
+
+    def clean(self):
+        cd = super().clean()
+        phone = cd['phone']
+        return super().clean()
+
+
+class RegisterForm(forms.Form):
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(11)])

@@ -4,29 +4,29 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, phone, password=None):
         """
-        Creates and saves a User with the given email, date of
+        Creates and saves a User with the given phone, date of
         birth and password.
         """
-        if not email:
+        if not phone:
             raise ValueError("Users must have an email address")
 
         user = self.model(
-            email=self.normalize_email(email),
+            phone = phone,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, phone, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
-            email,
+            phone,
             password=password,
         )
         user.is_admin = True
@@ -38,19 +38,22 @@ class User(AbstractBaseUser):
     email = models.EmailField(
         verbose_name="email address",
         max_length=255,
+        null=True,
+        blank=True,
         unique=True,
     )
     fullname = models.CharField(max_length=50 , verbose_name="fullnamneuser")
+    phone = models.CharField(max_length=12 , unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.phone
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
@@ -67,3 +70,14 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+class Opt(models.Model):
+    phone = models.CharField(max_length=11)
+    code = models.SmallIntegerField()
+    expiration_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.phone
+    
+
+    
