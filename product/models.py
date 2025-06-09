@@ -1,6 +1,9 @@
 from django.db import models
 
-# Create your models here.
+# Create your models here
+
+
+    
 
 class Size(models.Model):
     title = models.CharField(max_length=10)
@@ -26,3 +29,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+    
+class information(models.Model):
+    product = models.ForeignKey(Product, null=True , on_delete= models.CASCADE , related_name= 'informations')
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text[:20]
+    

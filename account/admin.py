@@ -6,9 +6,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from account.models import User,Opt
+from account.models import User,Otp
 from django.core import validators
-
 
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -89,18 +88,30 @@ admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
-admin.site.register(Opt)
+admin.site.register(Otp)
 
 
 class LoginForm(forms.Form):
-    phone = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(11)])
+    username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(11)])
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
-    def clean(self):
-        cd = super().clean()
-        phone = cd['phone']
-        return super().clean()
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if len(username)>100:
+            raise ValidationError(
+                'Invalid value:%(value)s is invalid',
+                code='invalide',
+                params = {'value':f'{username}'},
+            )
+        
+        return username
+    
 
 
-class RegisterForm(forms.Form):
+
+class OtploginForm(forms.Form):
     phone = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(11)])
+
+
+class CheckOtpForm(forms.Form):
+    code = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(4)])

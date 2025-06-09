@@ -5,7 +5,7 @@
 
     <!-- Contact Start -->
     <div class="container-fluid">
-        <h2 class="section-title position-relative text-uppercase text-center mx-xl-5 mb-4"><span class="bg-secondary pr-3">User login</span></h2>
+        <h2 class="section-title position-relative text-uppercase text-center mx-xl-5 mb-4"><span class="bg-secondary pr-3">User register and login</span></h2>
         <div class=" px-xl-5">
             <div class=" mb-5 contact-us" style="">
                 <div class="contact-form bg-light p-30">
@@ -15,9 +15,14 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="control-group">
+                            {% for error in form.non_field_errors %}
+                            <p class="alert alert-danger"> {{error}} </p>
+                            {% endfor %}
+
+
                             {{form.phone}}
                              {% for error in form.phone.errors  %}
-                            <p class="alert alert-danger"> {{error}} </p>
+                                   <p class="alert alert-danger"> {{error}} </p>
                             {% endfor %}
                             <p class="help-block text-danger"></p>
                         </div>
