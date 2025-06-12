@@ -74,11 +74,26 @@ class User(AbstractBaseUser):
 class Otp(models.Model):
     token = models.CharField(max_length=200,null=True)
     phone = models.CharField(max_length=11)
-    code = models.SmallIntegerField()
+    code = models.IntegerField()
     expiration_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.phone
    
+
+
+class Address(models.Model):
+    user = models.ForeignKey(User , on_delete=models.CASCADE , related_name='addresses')
+    full_name = models.CharField(max_length=30)
+    email = models.EmailField(blank=True , null=True)
+    phone = models.CharField(max_length=12)
+    address = models.CharField(max_length=300)
+    postal_code = models.CharField(max_length=30)
+
+
+    def __str__(self):
+        return self.user.phone
+
+
 
     

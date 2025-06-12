@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,reverse
 from django.views import View
-from .admin import LoginForm , OtploginForm , CheckOtpForm
+from .admin import LoginForm , OtploginForm , CheckOtpForm , AddressCreationForm
 from django.contrib.auth import authenticate, login ,logout
 from random import randint
 from account.models import Otp,User
@@ -84,4 +84,21 @@ class CheckOtpView(View):
 def user_logout(request):
     logout(request)
     return redirect('/')
-    
+   
+
+class AddAddressView(View):
+    def post(self , request):
+        form = AddressCreationForm(request.POST)
+        if form.is_valid():
+            address=form.save(commit=False)
+            address.user = request.user
+            address.save()
+            next_page = request.GET.get('next')
+            if next_page:
+                return redirect(next_page)
+
+        return render(request , 'account/add_address.html',{'form':form})     
+    def get(self , request):
+        form = AddressCreationForm()
+        return render(request , 'account/add_address.html',{'form':form})   
+

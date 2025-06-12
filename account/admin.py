@@ -6,8 +6,9 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from account.models import User,Otp
+from account.models import User,Otp,Address
 from django.core import validators
+
 
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -115,3 +116,12 @@ class OtploginForm(forms.Form):
 
 class CheckOtpForm(forms.Form):
     code = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), validators=[validators.MaxLengthValidator(4)])
+
+admin.site.register(Address)
+
+class AddressCreationForm(forms.ModelForm):
+     user = forms.IntegerField(required=False)
+     class Meta:
+        model = Address
+        exclude ="__all__"
+      
